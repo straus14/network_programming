@@ -1,0 +1,62 @@
+Project: Network emulator for transmission with packet sockets
+
+Section 1: Introduction
+
+	client -------- emulator ------- server
+
+	Fig. 1: Our project setup
+
+	We setup three computers (act as client, emulator, and server as Figure 1). We use Iperf on both client and server to generate and receive TCP/UDP packet themselves. The emulator is in the middle of the transmission, it adjusts incoming packets from one end and 		forward those altered packets to another end. Here The functionalies of the emulator:
+
+	- adding delay (in microseconds)
+	- making error packets (in percent)
+	- making loss packets (in percent)
+	- making out-of-order packets 			*Note: there are also some description in the c source file for out-of-order
+
+	Our code is for the emulator with logging support in external file, command line fine-tuning by user, and MAC address gathering from unknown random hosts. The other two ends (client and server) use Iperf to allow transmission. To install Iperf, simply type "sudo apt-get install iperf" on the terminal.
+
+Section 2: Setup, build and run procedure
+
+	1st: connect three computers to any network such as local hotspot (make sure communication between client,server &emulator doesn't include router or switch)
+
+	2nd: change the arp table of both client and server (with this they will forward packet only through the emulator)
+
+	Suppose IP address of server and client are 192.168.1.server/ 192.168.1.client
+		MAC address of emulator is AA:BB:CC:DD:EE:FF 
+
+	On server terminal, run: sudo arp -s 192.168.1.client AA:BB:CC:DD:EE:FF
+	On client terminal, run: sudo arp -s 192.168.1.server AA:BB:CC:DD:EE:FF
+ 
+	3rd: Complie the file: locate the file in one folder, gcc filename.c -o filename
+
+	4th: (optional) run wireshark on all computers to capture packets
+
+	5th: run the code on the terminal with this format: "sudo ./<filename> <emulation command> <statistic> <ip1> <ip2>"
+
+	- <emulation command> = 'd' for delay
+				'l' for loss 
+				'e' for error
+				'o' for out of order
+				'n' for normal packet forwarder (= emulator does nothing, just forward only)
+
+	- <statistic> = "microseconds" for delay
+			"percentage number" for loss and error
+			"number of period until out-of-order packet" for out-of-order
+			"any integer" for normal packet forwarder
+
+	- <ip1> = ip of client, <ip2> = ip of server
+
+	Examples: to emulate packet error with 14% with two random local host, run "sudo ./filename l 14 192.168.1.client 192.168.1.server"
+		  to emulate packet error with normal packet forwarder, run "sudo ./filename n 100 192.168.1.client 192.168.1.server"
+		  to emulate packet error with out-of-order packet at every multiple of 30, run "sudo ./filename o 30 192.168.1.client 			  192.168.1.server"
+
+	6th: run Iperf on both computer
+
+	- on Client terminal, run "iperf -c 192.168.1.client -n 20M -b 2M" for TCP (20M bytes transmit, 2M bandwidth)
+			   or run "iperf -c 192.168.1.234 -u -n 20M -b 2M" for UDP
+
+	- on Server terminal, run "iperf -s" for TCP
+			   or run "iperf -s -u" for UDP
+
+	7th: wait and observer the output, finished
+

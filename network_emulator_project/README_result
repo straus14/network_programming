@@ -1,0 +1,51 @@
+The attached Wireshark capture files are grouped in the folder "capture_emualtor","capture_server" and "capture_client". The results for server seems to be more affected by the emulator's effect as it is the main node to receive packets. 
+
+In the capture file: 192.168.1.234 is server IP and 192.168.1.10 is client IP
+
+Examples of file name: 
+
+	- d_5ms_256K_server means it is the capture of server with 256K TCP Rx window size with 5m delay per packet
+	- n_100_83K_server means it is the capture of server without any emulator's effect and default TCP Rx window size
+	- the capture file is for TCP unless it is specifically written as UDP
+
+Hints to measure the result:
+1) Packet loss and packet error
+- For testing UDP packet emulaion, one can directly check the iperf terminal. It gives the result in percentage for both packet loss and packet error. (We got accure result as expected)
+
+- For TCP, result can be seen by using "tcp.analysis.lost_segment" command in particular TCP flow in server side. Here the result were approximate.
+
+2) Delay  
+- check the roundtrip window(RTT graph) in the wireshark. Here result were approximate.
+
+3) Out of order 
+- In the captured wireshark file, one can check with command "tcp.analysis.out_of_order" for particular connection in server side. For UDP the results were accurate. However for TCP it were moderate.
+
+
+(optional)
+
+Below is some response on server terminal for out-of-order emulator command for UDP transmission
+
+emulator command: sudo ./filename o 5 192.168.1.client 192.168.1.server
+
+[ ID] Interval       Transfer     Bandwidth        Jitter   Lost/Total Datagrams
+[  3]  0.0-83.9 sec  20.0 MBytes  2.00 Mbits/sec   3.045 ms    9/14267 (0.063%)
+[  3]  0.0-83.9 sec  2851 datagrams received out-of-order
+
+emulator command: sudo ./filename o 10 192.168.1.client 192.168.1.server
+
+[ ID] Interval       Transfer     Bandwidth        Jitter   Lost/Total Datagrams
+[  4]  0.0-83.9 sec  19.9 MBytes  1.99 Mbits/sec   1.926 ms   61/14267 (0.43%)
+[  4]  0.0-83.9 sec  1419 datagrams received out-of-order
+
+emulator command: sudo ./filename o 50 192.168.1.client 192.168.1.server
+
+[ ID] Interval       Transfer     Bandwidth        Jitter   Lost/Total Datagrams
+[  3]  0.0-86.1 sec  18.9 MBytes  1.84 Mbits/sec   0.286 ms  786/14267 (5.5%)
+[  3]  0.0-86.1 sec  268 datagrams received out-of-order
+
+emulator command: sudo ./filename o 200 192.168.1.client 192.168.1.server
+
+[ ID] Interval       Transfer     Bandwidth        Jitter   Lost/Total Datagrams
+[  4]  0.0-141.0 sec  19.6 MBytes  1.17 Mbits/sec   0.288 ms  269/14266 (1.9%)
+[  4]  0.0-141.0 sec  70 datagrams received out-of-order
+

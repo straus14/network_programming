@@ -1,0 +1,17 @@
+Members
+
+Sudarshan Sadananda Matr. nr. 350880
+
+- Creating base file without emulation at packet socket level
+- Automization for getting MAC address of random host in the emulation with ARP request
+- Function for packet loss and packet error emulation
+- Usage of iperf tool, Ostinato
+- Testing and Analysis of emulation
+
+Theerawat Kiatdarakun Matr. nr. 340962
+
+- Function for packet delay and out of order emulation
+- Write statistics into an external file, write README files
+- Usage of iperf tool, Ostinato
+- Testing and Analysis of emulation
+– Review and optimization of the file
